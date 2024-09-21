@@ -37,7 +37,7 @@ return {
         cmd = "Neotree",
         keys = {
             {"<leader>ee", "<CMD>Neotree filesystem reveal current toggle<CR>", desc = "explore file"},
-            {"<leader>eb", "<CMD>Neotree buffers current toggle<CR>", desc = "explore buffer"},
+            --{"<leader>eb", "<CMD>Neotree buffers current toggle<CR>", desc = "explore buffer"},
         },
 
         dependencies = {

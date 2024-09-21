@@ -18,10 +18,7 @@ return {
         event = "InsertEnter",
 
         keys = {
-            { "jk", "<Plug>(skkeleton-enable)", mode = { "i", "c", "t" }, desc = "start skkeleton" },
-            { "<C-i>", "<Plug>(skkeleton-enable)", mode = { "i", "c", "t" }, desc = "start skkeleton" },
-            --{ "<C-j>", "<Plug>(skkeleton-enable)", mode = { "i", "c", "t" }, desc = "start skkeleton" },
-            --{ "<C-i>", "<Plug>(skkeleton-disable)", mode = { "i", "c", "t" }, desc = "end skkeleton" }
+            { "jk", "<Plug>(skkeleton-enable)", mode = { "i", "c", "t"}, desc = "start skkeleton" },
         },
 
         config = function()
@@ -52,6 +49,8 @@ return {
                         return 'ア'
                     elseif mode == 'zenkaku' then
                         return 'Ａ'
+                    elseif mode == 'hankata' then
+                        return '半'
                     end
                 else
                     return 'en'
