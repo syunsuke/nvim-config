@@ -1,6 +1,14 @@
 return {
 
     {
+        'xiyaowong/transparent.nvim',
+        config = function ()
+            vim.cmd[[TransparentEnable]]
+        end
+
+    },
+
+    {
         'catppuccin/nvim',
         enabled = true,
         name = "catputtin",
@@ -9,6 +17,7 @@ return {
         opts = {
             --flavour = mocha,
             flavour = "latte",
+            transparent_background = vim.g.transparent_background,
         },
 
         config = function()
