@@ -11,16 +11,14 @@ return {
     {
         'catppuccin/nvim',
         enabled = true,
-        name = "catputtin",
-        event = "VeryLazy",
-        priority = 1000,
-        opts = {
-            --flavour = mocha,
-            flavour = "latte",
-            transparent_background = vim.g.transparent_background,
-        },
+        name = "catppuccin",
 
         config = function()
+            require('catppuccin').setup({
+                --flavour = 'mocha',
+                --flavour = "latte",
+                transparent_background = vim.g.transparent_background,
+            })
             vim.cmd.colorscheme "catppuccin"
         end,
 
@@ -30,11 +28,10 @@ return {
         'nvim-lualine/lualine.nvim',
         opts = {
             options = {
-                theme = 'catppuccin',
+                --theme = 'catppuccin',
+                theme = 'auto',
             },
         },
-        event = "VeryLazy",
-        priority = 1001,
         dependencies = {
             { 'nvim-tree/nvim-web-devicons', lazy = true, },
             { 'catppuccin/nvim' },
