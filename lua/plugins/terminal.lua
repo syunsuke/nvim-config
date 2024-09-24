@@ -9,6 +9,8 @@ return {
         },
         keys = {
             {"<C-t>", "<CMD>ToggleTerm direction=float<CR>", mode = {"n","t"}, desc = "Float Terminal"},
+            {"<leader>t", "<CMD>ToggleTerm direction=float<CR>", mode = {"n"}, desc = "Float Terminal"},
+            {"<ESC>", [[<C-\><C-n>]], mode = {"t"}, desc = "Normal Mode"},
         }
     }
 }
