@@ -15,7 +15,7 @@ return {
 
         config = function()
             require('catppuccin').setup({
-                --flavour = 'mocha',
+                flavour = 'mocha',
                 --flavour = "latte",
                 transparent_background = vim.g.transparent_background,
             })

@@ -21,6 +21,7 @@ vim.opt.clipboard = "unnamedplus"
 --- keymap
 ----------------------------------------------------
 vim.keymap.set('i', 'jj', '<ESC>')
+vim.keymap.set('n', '<leader>rr', '<CMD>Jaq<CR>')
 
 
 
