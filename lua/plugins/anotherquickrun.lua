@@ -10,7 +10,8 @@ return {
             },
             external = {
                 markdown = "glow %",
-                rust = "rust-script %"
+                rust = "rust-script %",
+                haskell = "runghc %"
             },
         },
 
@@ -25,7 +26,7 @@ return {
             wincmd      = false,
 
             -- Auto-save files
-            autosave    = false
+            autosave    = true
         },
 
         ui = {

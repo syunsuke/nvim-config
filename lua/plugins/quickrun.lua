@@ -1,6 +1,6 @@
 return{
     "thinca/vim-quickrun",
-    enabled = false,
+    enabled = true,
 
     dependencies = {
         "lambdalisue/vim-quickrun-neovim-job",
@@ -10,18 +10,18 @@ return{
         vim.g.quickrun_config = {
 
             ["_"] = {
-                ["runner"] = "neovim_job",
+                ["runner"] = "system",
                 --["runner"] = "terminal",
                 ["outputter/buffer/opener"] = "new",
                 ["outputter/buffer/close_on_empty"] = 1,
             },
 
             ["rust"] = {
-                ["exec"] = "rust-script %s",
+                ["exec"] = "rust-script",
             },
         }
 
         --vim.keymap.set("n", "<leader>r", "<Nop>")
-        --vim.keymap.set("n", "<leader>rr", ":QuickRun<CR>", { silent = true })
+        vim.keymap.set("n", "<leader>rq", ":QuickRun<CR>", { silent = true })
     end,
 }
