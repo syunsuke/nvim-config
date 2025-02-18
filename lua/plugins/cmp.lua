@@ -50,6 +50,29 @@ return {
         end
     },
 
+    -- Lspsagaの設定
+    {
+        'nvimdev/lspsaga.nvim',
+        config = function()
+            require('lspsaga').setup({
+                ui = {
+                    code_action = '*',
+                    --code_action = '',
+                    --code_action = '',
+                },
+            })
+            --vim.keymap.set('n', 'K', '<cmd>Lspsaga hover_doc<CR>')
+            vim.keymap.set('n', 'gr', '<cmd>Lspsaga finder<CR>')
+            vim.keymap.set('n', 'ga', '<cmd>Lspsaga code_action<CR>')
+
+        end,
+        dependencies = {
+            'nvim-treesitter/nvim-treesitter', -- optional
+            'nvim-tree/nvim-web-devicons',     -- optional
+        }
+    },
+
+
 --    {
 --        'mrcjkb/haskell-tools.nvim',
 --        dependencies = {

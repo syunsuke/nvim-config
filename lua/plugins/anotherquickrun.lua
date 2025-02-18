@@ -11,6 +11,7 @@ return {
             external = {
                 markdown = "glow %",
                 rust = "rust-script %",
+                --haskell = "runghc % < test.txt"
                 haskell = "runghc %"
             },
         },
@@ -42,10 +43,10 @@ return {
                 winblend  = 15,
 
                 -- Num from `0-1` for measurements
-                height    = 0.7,
-                width     = 0.7,
-                x         = 0.7,
-                y         = 0.6
+                height    = 0.5,
+                width     = 0.5,
+                x         = 0.8,
+                y         = 0.8
             },
 
             terminal = {

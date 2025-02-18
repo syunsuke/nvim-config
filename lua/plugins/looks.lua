@@ -1,6 +1,14 @@
 return {
 
     {
+        "marcussimonsen/let-it-snow.nvim",
+        cmd = "LetItSnow", -- Wait with loading until command is run
+        opts = {
+            delay = 200,
+        },
+    },
+
+    {
         'xiyaowong/transparent.nvim',
         config = function ()
             vim.cmd[[TransparentEnable]]
@@ -43,6 +51,8 @@ return {
         cmd = "Neotree",
         keys = {
             {"<leader>ee", "<CMD>Neotree filesystem reveal current toggle<CR>", desc = "explore file"},
+            --{"<leader>ee", "<CMD>Neotree filesystem reveal left toggle<CR>", desc = "explore file"},
+            --{"<leader>eb", "<CMD>Neotree filesystem reveal left toggle<CR>", desc = "explore file left window"},
             --{"<leader>eb", "<CMD>Neotree buffers current toggle<CR>", desc = "explore buffer"},
         },
 

@@ -23,7 +23,8 @@ vim.opt.clipboard = "unnamedplus"
 vim.keymap.set('i', 'jj', '<ESC>')
 vim.keymap.set('n', '<leader>rr', '<CMD>Jaq<CR>')
 
-vim.keymap.set('n', '<space>k', vim.diagnostic.open_float, { desc = 'LSP diagnostic open_float' })
+--vim.keymap.set('n', '<space>k', vim.diagnostic.open_float, { desc = 'LSP diagnostic open_float' })
+vim.keymap.set('n', 'K', '<cmd>Lspsaga hover_doc<CR>', { desc = 'Lspsaga hover doc' })
 
 
 
