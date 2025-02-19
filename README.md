@@ -34,7 +34,7 @@ sudo apt install build-essential fzf unzip skkdic skkdic-extra
 curl -fsSL https://deno.land/install.sh | sh
 ```
 
-`~/.deno/bin`を`~/.zshrc`等で環境変数PATHに入れる。
+`~/.deno/bin`を`~/.zshrc`等で環境変数PATHに入れます。
 
 
 ## リセット
@@ -45,7 +45,7 @@ curl -fsSL https://deno.land/install.sh | sh
 1. 設定のバックアップとして、`~/.config/nvim/`ディレクトリをコピーして何処か別の場所に置いておきます。
 1. 次に以下のディレクトリを消去します。
 
-- ~/.chash/nvim
+- ~/.cache/nvim
 - ~/.local/share/nvim
 - ~/.local/state/nvim
 
