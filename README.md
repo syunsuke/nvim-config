@@ -37,6 +37,13 @@ curl -fsSL https://deno.land/install.sh | sh
 `~/.deno/bin`を`~/.zshrc`等で環境変数PATHに入れます。
 
 
+## Haskell language server
+
+HLSはGHCup産を利用する設定になっています。
+Masonを利用する場合は、二重設定になるので注意が必要。
+
+
+
 ## リセット
 
 以前にneovimを利用していて設定等がよくわからなくなったので、新たに初めからやりなおしたい場合。次のふたつを行ないます。
