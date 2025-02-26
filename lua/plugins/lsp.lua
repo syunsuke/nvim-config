@@ -5,10 +5,12 @@ return {
     -------------------------------
     {
         'williamboman/mason.nvim',
-        build = ':MasonUpdate',  -- masonをアップデート
-        config = function()
-            require("mason").setup()
-        end
+        build = ':MasonUpdate',
+        opts = {
+                ui = {border = "rounded",
+                      width = 0.8, height = 0.8,
+                     },
+                },
     },
 
     -------------------------------
@@ -17,13 +19,14 @@ return {
     {
         'williamboman/mason-lspconfig.nvim',
         dependencies = { 'williamboman/mason.nvim', 'neovim/nvim-lspconfig' },
-        config = function()
-            require("mason-lspconfig").setup({
-                -- 無い場合に自動でインストールする設定
+        opts = {
                 ensure_installed = { "lua_ls",  "clangd" },
-                automatic_installation = true,
-            })
-        end
+
+                -- mason-lspconfig.setup_handorersを使う場合は
+                -- automatic_installationをしないようにする
+                -- (どちらか択一的に使うのが良いと思う) 
+                automatic_installation = false,
+                }
     },
 
     -------------------------------
@@ -31,7 +34,10 @@ return {
     -------------------------------
     {
         'neovim/nvim-lspconfig',
-        event = { "BufReadPre", "BufNewFile" },
+        -- mason_lspconfigとの連携がある場合、読みこみのタイミングに注意
+        -- (automatic_installation = trueの時等)
+        -- event = { "BufReadPre", "BufNewFile" },
+
         config = function()
             local lspconfig = require('lspconfig')
             local mason_lspconfig = require('mason-lspconfig')
@@ -67,6 +73,7 @@ return {
             -->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
             -- HaskellのHLSl
+            -- 但し、haskell-tools.nvimを使う場合、lspconfigの設定は使わない
             lspconfig.hls.setup {
                 -- GHCupで準備したHLSの名前
                 cmd = {"haskell-language-server-wrapper", "--lsp"}
@@ -75,19 +82,20 @@ return {
         end -- Config end
     },
 
+    -- Haskellに特化したLSP設定プラグイン
+--    {
+--        'mrcjkb/haskell-tools.nvim',
+--        version = '^4', -- Recommended
+--        lazy = false, -- This plugin is already lazy
+--    },
+
     -- Lspsagaの設定
     {
         'nvimdev/lspsaga.nvim',
         dependencies = {'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' },
+        enabled = true,
         config = function()
-            require('lspsaga').setup({
-                ui = {
-                    -- 表示がずれないアイコンフォントを探す
-                    code_action = '*',
-                    --code_action = '',
-                    --code_action = '',
-                },
-            })
+            require('lspsaga').setup({})
 
             vim.keymap.set('n', 'K', '<cmd>Lspsaga hover_doc<CR>')
             vim.keymap.set('n', 'gr', '<cmd>Lspsaga finder<CR>')
@@ -96,16 +104,5 @@ return {
         end,
     },
 
---    {
---        'mrcjkb/haskell-tools.nvim',
---        dependencies = {
---            'nvim-lua/plenary.nvim',
---        },
---        version = '^2', -- Recommended
---        ft = { 'haskell', 'lhaskell', 'cabal', 'cabalproject' },
---        init = function()
---            vim.g.haskell_tools = {}
---        end,
---    },
---
+
 }
