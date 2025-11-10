@@ -12,7 +12,8 @@ return {
                 markdown = "glow %",
                 rust = "rust-script %",
                 --haskell = "runghc % < test.txt"
-                haskell = "runghc %"
+                haskell = "runghc %",
+                python = "uv run python %"
             },
         },
 

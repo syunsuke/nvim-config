@@ -6,7 +6,7 @@ return {
         event = { "BufReadPost", "BufNewFile" }, -- ファイル読み込み時に読み込む
         config = function()
             require('nvim-treesitter.configs').setup({
-                ensure_installed = { "lua", "haskell", "rust", "vim", "vimdoc" }, -- 必要な言語のパーサーをインストール
+                ensure_installed = { "lua", "haskell", "rust", "vim", "python", "vimdoc" }, -- 必要な言語のパーサーをインストール
                 highlight = {
                     enable = true, -- シンタックスハイライトを有効化
                 },
@@ -15,7 +15,9 @@ return {
                 },
             })
         end,
-    }
+    },
+
+
 }
 
 

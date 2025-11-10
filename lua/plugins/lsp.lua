@@ -4,8 +4,10 @@ return {
     -- mason.nvimの設定
     -------------------------------
     {
-        'williamboman/mason.nvim',
-        build = ':MasonUpdate',
+        "mason-org/mason.nvim",
+        build = ":MasonUpdate",
+        cmd = { "Mason", "MasonUpdate", "MasonLog", "MasonInstall", "MasonUninstall", "MasonUninstallAll" },
+        config = true,
         opts = {
                 ui = {border = "rounded",
                       width = 0.8, height = 0.8,
@@ -17,78 +19,144 @@ return {
     -- mason-lspconfig.nvimの設定
     -------------------------------
     {
-        'williamboman/mason-lspconfig.nvim',
-        dependencies = { 'williamboman/mason.nvim', 'neovim/nvim-lspconfig' },
+        "mason-org/mason-lspconfig.nvim",
+        dependencies = {
+            { "mason-org/mason.nvim" },
+            { "neovim/nvim-lspconfig" },
+        },
         opts = {
-                ensure_installed = { "lua_ls",  "clangd" },
+            ensure_installed = { "lua_ls",  "clangd" },
+            automatic_enable = true,
+        },
+        event = { "BufReadPre", "BufNewFile" },
+        config = function(_, opts)
 
-                -- mason-lspconfig.setup_handorersを使う場合は
-                -- automatic_installationをしないようにする
-                -- (どちらか択一的に使うのが良いと思う) 
-                automatic_installation = false,
-                }
+            -- ★ サーバ個別設定は vim.lsp.config で
+            vim.lsp.config('lua_ls', {
+                settings = { Lua = { diagnostics = { globals = { "vim", "conky" } } } },
+            })
+
+            require("mason").setup()
+            require("mason-lspconfig").setup(opts)
+
+
+            --setup_handlers関数は削除されている
+            --require("mason-lspconfig").setup_handlers({
+            --    function(server)
+            --        vim.lsp.enable(server)
+            --    end,
+            --})
+
+        end,
+
     },
 
     -------------------------------
-    -- nvim-lspconfigの設定
+    -- mason-lspconfig.nvimの外部でHLSは管理
     -------------------------------
     {
-        'neovim/nvim-lspconfig',
-        -- mason_lspconfigとの連携がある場合、読みこみのタイミングに注意
-        -- (automatic_installation = trueの時等)
-        -- event = { "BufReadPre", "BufNewFile" },
+        "neovim/nvim-lspconfig",
+        event = { "BufReadPre", "BufNewFile" },
+        dependencies = {
+            {'nvimdev/lspsaga.nvim'}
+        },
 
         config = function()
-            local lspconfig = require('lspconfig')
-            local mason_lspconfig = require('mason-lspconfig')
 
-            -->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-            -- mason_lspconfigプラグインの機能で自動設定
-            -->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-            mason_lspconfig.setup_handlers {
+            -- nvim-cmp を使うなら capabilities を拡張（未導入でも安全）
+            local capabilities = vim.lsp.protocol.make_client_capabilities()
+            pcall(function()
+                capabilities = require("cmp_nvim_lsp").default_capabilities(capabilities)
+            end)
 
-                -- keyの無い一番初めの要素がデフォルトの
-                -- ハンドラー関数になる
-                function(server_name)
-                    lspconfig[server_name].setup{}
+            -- Key Setting
+            local function common_on_attach(client, bufnr)
+                vim.notify(("LSP attached: %s (buf=%d)"):format(client.name, bufnr))
+                local map = function(m, lhs, rhs, d) vim.keymap.set(m, lhs, rhs, { buffer = bufnr, desc = d }) end
+                --map("n", "gd", vim.lsp.buf.definition,  "LSP: Go to def")
+                --map("n", "gr", vim.lsp.buf.references,  "LSP: References")
+                --map("n", "K",  vim.lsp.buf.hover,       "LSP: Hover")
+                --map("n", "<leader>rn", vim.lsp.buf.rename, "LSP: Rename")
+                --map("n", "<leader>ca", vim.lsp.buf.code_action, "LSP: Code Action")
+                --map("n", "<C-l>", function() vim.cmd("LspRestart") end, "LSP: Restart")
+                --map("n", "K", function() vim.cmd("Lspsaga hover_doc")end, "LSP: Hover Doc")
+                map("n", "K", "<cmd>Lspsaga hover_doc<CR>", "LSP: Hover Doc")
+                map("n", "<leader>rn", "<cmd>Lspsaga rename<CR>", "LSP: Rename")
+                map("n", "ga", "<cmd>Lspsaga code_action<CR>", "LSP: Code Action")
+                map("n", "gr", "<cmd>Lspsaga finder<CR>", "LSP: finder")
+                map("n", "gd", "<cmd>Lspsaga peek_definition<CR>", "LSP: Peek Def")
+                map("n", "gD", "<cmd>Lspsaga goto_definition<CR>", "LSP: Go Def")
+                map("n", "<leader>rn", "<cmd>Lspsaga rename<CR>", "LSP: Rename")
+                map("n", "<leader>L", "<cmd>LspRestart<CR>", "LSP: Restart")
+            end
+
+            --vim.keymap.set('n', '<leader>ca', '<cmd>Lspsaga code_action<CR>')
+            -- 診断の見た目（控えめ）
+            vim.diagnostic.config({
+                virtual_text = { spacing = 2, prefix = "●" },
+                float = { border = "rounded", source = "if_many" },
+                severity_sort = true,
+            })
+
+            --local has_new = (vim.lsp and vim.lsp.enable and vim.lsp.config)
+
+
+            -- ★ 新API: 共通設定をワイルドカードで
+            vim.lsp.config("*", {
+                --capabilities = capabilities,
+                on_attach = common_on_attach,
+            })
+
+            -- Ruff（lint/format/import）。Hover は Pyright系に任せる
+            vim.lsp.config("ruff", {
+                cmd = { 'ruff', 'server' },
+                settings = {},
+                on_attach = function(client, bufnr)
+                    common_on_attach(client, bufnr)
+                    client.server_capabilities.hoverProvider = false
                 end,
+            })
 
-                -- 二つ目以降はキーにランゲージサーバー名をとって
-                -- 要素にハンドラー関数を定義
-                ["lua_ls"] = function ()
-                    lspconfig.lua_ls.setup {
-                        settings = {
-                            Lua = {
-                                diagnostics = {
-                                    globals = { "vim" }
-                                }
-                            }
-                        }
-                    }
-                end, -- lua_ls end
-            }
+            -- BasedPyright（型・補完）
+            vim.lsp.config("basedpyright", {
+                cmd = { 'basedpyright-langserver', '--stdio' },
+                settings = {
+                    basedpyright = {
+                        disableOrganizeImports = true, -- import 整理は Ruff に任せる
+                        analysis = { 
 
-            -->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-            -- masonの外にあるLanguage Server用
-            -->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                            -- タイプチェックの厳しさ: "off" | "basic" | "standard" | "strict" | "recommended" | "all"
+                            typeCheckingMode = "basic",
+                            -- 解析範囲: "openFilesOnly" | "workspace"
+                            diagnosticMode = "workspace" },
+                    },
+                },
+            })
 
-            -- HaskellのHLSl
-            -- 但し、haskell-tools.nvimを使う場合、lspconfigの設定は使わない
-            lspconfig.hls.setup {
-                -- GHCupで準備したHLSの名前
-                cmd = {"haskell-language-server-wrapper", "--lsp"}
-            }
+            -- ★ 新API: 共通設定をワイルドカードで
+            vim.lsp.config("*", {
+                --capabilities = capabilities,
+                on_attach = common_on_attach,
+            })
 
-        end -- Config end
+            -- Haskell用の設定
+            vim.lsp.config("hls", {
+                cmd = { "haskell-language-server-wrapper", "--lsp" },
+                settings = {
+                    haskell = {
+                        formattingProvider = "ormolu",
+                    },
+                },
+            })
+
+
+            vim.lsp.enable("ruff")
+            vim.lsp.enable("basedpyright")
+            vim.lsp.enable("hls")
+            --vim.lsp.enable("*")
+
+        end,
     },
-
-    -- Haskellに特化したLSP設定プラグイン
---    {
---        'mrcjkb/haskell-tools.nvim',
---        version = '^4', -- Recommended
---        lazy = false, -- This plugin is already lazy
---    },
-
     -- Lspsagaの設定
     {
         'nvimdev/lspsaga.nvim',
@@ -97,9 +165,9 @@ return {
         config = function()
             require('lspsaga').setup({})
 
-            vim.keymap.set('n', 'K', '<cmd>Lspsaga hover_doc<CR>')
-            vim.keymap.set('n', 'gr', '<cmd>Lspsaga finder<CR>')
-            vim.keymap.set('n', 'ga', '<cmd>Lspsaga code_action<CR>')
+            --vim.keymap.set('n', 'K', '<cmd>Lspsaga hover_doc<CR>')
+            --vim.keymap.set('n', 'gr', '<cmd>Lspsaga finder<CR>')
+            --vim.keymap.set('n', '<leader>ca', '<cmd>Lspsaga code_action<CR>')
 
         end,
     },
